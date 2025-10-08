@@ -41,8 +41,9 @@ async def connect_and_handle_ws():
                         data = json.loads(raw_message)
                         if data.get("type") in {"init", "update"}:
                             state = data.get("state", {})
+                            players_state = state.get("players", {})
                             game_state.clear()
-                            game_state.update(state)
+                            game_state.update(players_state)
                 except websockets.exceptions.ConnectionClosedOK:
                     break
                 except websockets.exceptions.ConnectionClosedError as e:
@@ -90,6 +91,10 @@ def animation():
         rect = pygame.Rect(x, y, width, height)
         mini_inu = pygame.transform.scale(inu, (width, height))
         screen.blit(mini_inu, (x, y))
+        # プレイヤーの位置(x, y)を画面右上に表示する
+        font = pygame.font.Font(None, 24)
+        position_text = font.render(f"({x}, {y})", True, (255, 255, 255))
+        screen.blit(position_text, (SCREEN_WIDTH - 100, 10))
     pygame.display.flip()
 
 
